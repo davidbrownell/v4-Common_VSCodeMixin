@@ -1,0 +1,1 @@
+The repository is a mixin repository, meaning that it cannot add libraries to the environment (it can only add tools and scripts). Normally, we would add [cogapp](https://nedbatchelder.com/code/cog) as a Python library in `Setup_custom.py`, but that can't be done due to this restriction. To work around the problem, we manually invoke a copy of `cogapp` at `./Impl/cogapp`.
