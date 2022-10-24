@@ -29,7 +29,7 @@ from Common_Foundation.EnumSource import EnumSource
 from Common_Foundation.Streams.DoneManager import DoneManager, DoneManagerFlags
 from Common_Foundation import TextwrapEx
 
-from Common_FoundationEx import ExecuteTasks
+from Common_FoundationEx import ExecuteTasksEx
 from Common_FoundationEx.InflectEx import inflect
 
 from Impl.cogapp import Cog
@@ -98,11 +98,7 @@ def UpdateLaunchFiles(
             return
 
         tasks = [
-            ExecuteTasks.TaskData(
-                str(filename),
-                filename,
-                None,
-            )
+            ExecuteTasksEx.TaskData(str(filename), filename)
             for filename in filenames
         ]
 
@@ -112,13 +108,15 @@ def UpdateLaunchFiles(
         assert cog_tools_dir.is_dir(), cog_tools_dir
 
         # ----------------------------------------------------------------------
-        def Step2Func(
-            filename: Path,
-            on_simple_status: Callable[[str], None],  # pylint: disable=unused-argument
-        ) -> Tuple[Optional[int], ExecuteTasks.TransformStep3Type]:
+        def TransformStep1(
+            context: Path,
+            on_simple_status_func: Callable[[str], None],  # pylint: disable=unused-argument
+        ) -> Tuple[Optional[int], ExecuteTasksEx.TransformStep2FuncType]:
+            filename = context
+
             # ----------------------------------------------------------------------
-            def Step3Func(
-                on_progress: ExecuteTasks.Step3ProgressProtocol,  # pylint: disable=unused-argument
+            def Step2(
+                status: ExecuteTasksEx.Status,  # pylint: disable=unused-argument
             ) -> Tuple[None, Optional[str]]:
                 # Manually invoke the local cog installation
                 sink = io.StringIO()
@@ -152,7 +150,7 @@ def UpdateLaunchFiles(
                         result = 1
 
                 if result != 0:
-                    raise ExecuteTasks.TransformException(
+                    raise ExecuteTasksEx.TransformException(
                         textwrap.dedent(
                             """\
                             Cogging '{}' failed with result code '{}'.
@@ -171,15 +169,15 @@ def UpdateLaunchFiles(
 
             # ----------------------------------------------------------------------
 
-            return None, Step3Func
+            return None, Step2
 
         # ----------------------------------------------------------------------
 
-        ExecuteTasks.Transform(
+        ExecuteTasksEx.Transform(
             dm,
             "Cogging",
             tasks,
-            Step2Func,
+            TransformStep1,
             quiet=quiet,
             max_num_threads=1 if single_threaded else None,
         )
