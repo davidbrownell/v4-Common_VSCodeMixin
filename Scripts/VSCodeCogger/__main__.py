@@ -29,7 +29,7 @@ from Common_Foundation.EnumSource import EnumSource
 from Common_Foundation.Streams.DoneManager import DoneManager, DoneManagerFlags
 from Common_Foundation import TextwrapEx
 
-from Common_FoundationEx import ExecuteTasksEx
+from Common_FoundationEx import ExecuteTasks
 from Common_FoundationEx.InflectEx import inflect
 
 from Impl.cogapp import Cog
@@ -98,7 +98,7 @@ def UpdateLaunchFiles(
             return
 
         tasks = [
-            ExecuteTasksEx.TaskData(str(filename), filename)
+            ExecuteTasks.TaskData(str(filename), filename)
             for filename in filenames
         ]
 
@@ -111,12 +111,12 @@ def UpdateLaunchFiles(
         def TransformStep1(
             context: Path,
             on_simple_status_func: Callable[[str], None],  # pylint: disable=unused-argument
-        ) -> Tuple[Optional[int], ExecuteTasksEx.TransformStep2FuncType]:
+        ) -> Tuple[Optional[int], ExecuteTasks.TransformStep2FuncType]:
             filename = context
 
             # ----------------------------------------------------------------------
             def Step2(
-                status: ExecuteTasksEx.Status,  # pylint: disable=unused-argument
+                status: ExecuteTasks.Status,  # pylint: disable=unused-argument
             ) -> Tuple[None, Optional[str]]:
                 # Manually invoke the local cog installation
                 sink = io.StringIO()
@@ -150,7 +150,7 @@ def UpdateLaunchFiles(
                         result = 1
 
                 if result != 0:
-                    raise ExecuteTasksEx.TransformException(
+                    raise ExecuteTasks.TransformException(
                         textwrap.dedent(
                             """\
                             Cogging '{}' failed with result code '{}'.
@@ -173,7 +173,7 @@ def UpdateLaunchFiles(
 
         # ----------------------------------------------------------------------
 
-        ExecuteTasksEx.Transform(
+        ExecuteTasks.Transform(
             dm,
             "Cogging",
             tasks,
