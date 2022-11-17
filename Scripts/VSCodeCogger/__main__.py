@@ -134,7 +134,6 @@ def UpdateLaunchFiles(
                         "-c",               # Checksum
                         "-e",               # Warn if a file has no cog code in it
                         "-r",               # Replace
-                        "-s", " // COGGED", # Line suffix
                         "--verbosity=0",
                         "-I", str(cog_tools_dir),
                         str(filename),

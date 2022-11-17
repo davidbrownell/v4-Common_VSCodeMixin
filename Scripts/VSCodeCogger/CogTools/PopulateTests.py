@@ -57,7 +57,7 @@ _CONFIGURATIONS: Dict[
             "args": [
                 "-o",
                 "python_files=*Test.py",
-                "--verbose",
+                "-vv",
                 "{basename}",
 
                 "--capture=no",  // Do not capture stderr/stdout
