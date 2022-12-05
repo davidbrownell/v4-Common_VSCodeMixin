@@ -15,7 +15,11 @@
 # ----------------------------------------------------------------------
 """Populates cog content in VSCode files."""
 
+import importlib
+import inspect
 import io
+import os
+import sys
 import textwrap
 
 from pathlib import Path
@@ -25,7 +29,9 @@ import typer
 
 from typer.core import TyperGroup
 
+from Common_Foundation.ContextlibEx import ExitStack
 from Common_Foundation.EnumSource import EnumSource
+from Common_Foundation import PathEx
 from Common_Foundation.Streams.DoneManager import DoneManager, DoneManagerFlags
 from Common_Foundation import TextwrapEx
 
@@ -149,6 +155,74 @@ def UpdateLaunchFiles(
                         result = 1
 
                 if result != 0:
+                    if "no cog code found in" in output:
+                        rows: List[List[str]] = []
+
+                        plugin_dir = PathEx.EnsureDir(Path(__file__).parent / "CogTools")
+
+                        os.environ["__extracting_documentation__"] = "1"
+                        with ExitStack(lambda: os.environ.pop("__extracting_documentation__")):
+                            for plugin in plugin_dir.iterdir():
+                                if not plugin.is_file():
+                                    continue
+
+                                sys.path.insert(0, str(plugin.parent))
+                                with ExitStack(lambda: sys.path.pop(0)):
+                                    mod = importlib.import_module(plugin.stem)
+                                    assert mod is not None
+
+                                    rows.append(
+                                        [
+                                            plugin.stem,
+                                            inspect.getdoc(mod) or "",
+                                            str(plugin) if dm.capabilities.is_headless else plugin.name,
+                                        ],
+                                    )
+
+                        # ----------------------------------------------------------------------
+                        def DecorateRow(
+                            index: int,  # pylint: disable=unused-argument
+                            cols: List[str],
+                        ) -> List[str]:
+                            if not dm.capabilities.is_headless:
+                                cols[-1] = TextwrapEx.CreateAnsiHyperLink(
+                                    "file:///{}".format((plugin_dir / cols[-1]).as_posix()),
+                                    cols[-1],
+                                )
+
+                            return cols
+
+                        # ----------------------------------------------------------------------
+
+                        output = textwrap.dedent(
+                            """\
+                            No cog code was found in '{}'.
+
+                            To use this functionality, add the following cog code in VSCode's 'launch.json' file:
+
+                                // [[[cog import <functionality>]]]
+                                // [[[end]]]
+
+                            where '<functionality>' can be one of:
+
+                            {}
+                            """,
+                        ).format(
+                            filename,
+                            TextwrapEx.Indent(
+                                TextwrapEx.CreateTable(
+                                    [
+                                        "<functionality>",
+                                        "Description",
+                                        "Source Code",
+                                    ],
+                                    rows,
+                                    decorate_values_func=DecorateRow,
+                                ),
+                                4,
+                            ),
+                        )
+
                     raise ExecuteTasks.TransformException(
                         textwrap.dedent(
                             """\
@@ -180,6 +254,17 @@ def UpdateLaunchFiles(
             quiet=quiet,
             max_num_threads=1 if single_threaded else None,
         )
+
+        if len(tasks) == 1 and dm.result != 0:
+            with tasks[0].log_filename.open() as f:
+                content = f.read()
+
+            if dm.result < 0:
+                func = dm.WriteError
+            else:
+                func = dm.WriteWarning
+
+            func(content + "\n\n")
 
 
 # ----------------------------------------------------------------------

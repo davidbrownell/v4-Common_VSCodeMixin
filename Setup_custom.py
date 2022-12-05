@@ -58,14 +58,6 @@ def GetConfigurations() -> Union[
                 "https://github.com/davidbrownell/v4-Common_Foundation.git",
             ),
         ],
-        # BugBug Configuration.VersionSpecs(
-        # BugBug     [],                             # tools
-        # BugBug     {
-        # BugBug         "Python": [
-        # BugBug             Configuration.VersionInfo("cogapp", SemVer("3.3.0")),
-        # BugBug         ],
-        # BugBug     },
-        # BugBug ),
     )
 
 
