@@ -166,11 +166,7 @@ def Execute() -> None:
     def Print(
         value: str,
     ) -> None:
-        for line in value.split("\n"):
-            if line:
-                line = line.ljust(150)
-
-            cog.outl(line)
+        cog.outl(value)
 
     # ----------------------------------------------------------------------
 
@@ -221,4 +217,5 @@ def Execute() -> None:
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
-Execute()
+if os.environ.get("__extracting_documentation__", None) is None:
+    Execute()
