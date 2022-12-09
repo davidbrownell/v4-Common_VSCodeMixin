@@ -39,7 +39,7 @@ fi
 
 if [[ ${should_continue} == 1 && ${DEVELOPMENT_ENVIRONMENT_REPOSITORY_ACTIVATED_KEY} ]]; then
     echo ""
-    echo "[31m[1mERROR:[0m ERROR: Please run this script for a standard ^(non-activated^) command prompt."
+    echo "[31m[1mERROR:[0m ERROR: Please run this script for a standard (non-activated) command prompt."
     echo "[31m[1mERROR:[0m"
     echo ""
 
@@ -47,42 +47,75 @@ if [[ ${should_continue} == 1 && ${DEVELOPMENT_ENVIRONMENT_REPOSITORY_ACTIVATED_
 fi
 
 if [[ ${should_continue} == 1 ]]; then
-    # Enlist and setup Common_Foundation
+    # Parse the args
+    name=""
+    next_is_name=0
 
+    no_hooks_arg=""
+    force_arg=""
+    verbose_arg=""
+    debug_arg=""
+
+    ARGS=()
+
+    for var in "${@:2}"; do
+        if [[ $next_is_name == 1 ]]; then
+            name=$var
+            next_is_name=0
+        elif [[ $var == --name ]]; then
+            next_is_name=1
+        else
+            ARGS+=("$var")
+        fi
+
+        if [[ $var == --no-hooks ]]; then
+            no_hooks_arg=$var
+        elif [[ $var == --force ]]; then
+            force_arg=$var
+        elif [[ $var == --verbose ]]; then
+            verbose_arg=$var
+        elif [[ $var == --debug ]]; then
+            debug_arg=$var
+        fi
+    done
+
+    if [[ ! -z "${name}" ]]; then
+        name_arg="--name ${name}"
+    else
+        name_arg=""
+    fi
+fi
+
+if [[ ${should_continue} == 1 ]]; then
+    # Enlist and setup Common_Foundation
     if [[ ! -e "$1/Common/Foundation" ]]; then
         echo "Enlisting in Common_Foundation..."
         echo ""
 
-        git clone -b release https://github.com/davidbrownell/v4-Common_Foundation.git "$1/Common/Foundation.tmp"
+        git clone https://github.com/davidbrownell/v4-Common_Foundation.git "$1/Common/Foundation.tmp"
+
+        pushd "$1/Common/Foundation.tmp" > /dev/null
+        git checkout tags/main_stable
+        popd > /dev/null
+
         mv "$1/Common/Foundation.tmp" "$1/Common/Foundation"
 
         echo ""
         echo "DONE!"
         echo ""
 
-        name=""
-        next_is_name=0
+        "$1/Common/Foundation/Setup.sh" ${name_arg} ${no_hooks_arg} ${force_arg} ${verbose_arg} ${debug_arg}
+    else
+        echo "Updating Common_Foundation..."
+        echo ""
 
-        ARGS=()
+        pushd "$1/Common/Foundation" > /dev/null
+        git fetch origin main_stable
+        popd > /dev/null
 
-        for var in "${@:2}"; do
-            if [[ $next_is_name == 1 ]]; then
-                name=$var
-                next_is_name=0
-            elif [[ $var == --name ]]; then
-                next_is_name=1
-            else
-                ARGS+=("$var")
-            fi
-        done
-
-        if [[ ! -z "${name}" ]]; then
-            name_arg=--name "${name}"
-        else
-            name_arg=""
-        fi
-
-        "$1/Common/Foundation/Setup.sh" ${name_arg} ${ARGS[@]}
+        echo ""
+        echo "DONE!"
+        echo ""
     fi
 
     # Write the environment activation and python execution statements to a temporary file
@@ -100,9 +133,8 @@ if [[ ${should_continue} == 1 ]]; then
 #!/bin/bash
 set -e
 
-source "$1/Common/Foundation/${activate_cmd}" python310
-Enlist.sh Enlist "${this_dir}" "$1"
-Enlist.sh Setup "${this_dir}" "$1" ${ARGS[@]}
+source "$1/Common/Foundation/${activate_cmd}" python310 ${force_arg} ${verbose_arg} ${debug_arg}
+Enlist.sh EnlistAndSetup "${this_dir}" "$1" ${no_hooks_arg} ${force_arg} ${verbose_arg} ${debug_arg} ${ARGS[@]}
 EOF
 
     chmod +x ../bootstrap_tmp.sh

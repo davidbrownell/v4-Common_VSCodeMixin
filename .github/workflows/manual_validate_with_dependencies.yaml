@@ -1,0 +1,27 @@
+# ----------------------------------------------------------------------
+# |
+# |  manual_validate_with_dependencies.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 09:11:50
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "Validate (including dependencies)"
+run-name: ${{ github.run_number }} [${{ github.actor }}] on ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+
+jobs:
+  _2034b3a9-d4a7-4133-9d9e-9659583edc19:
+    name: "Validate"
+    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate_with_dependencies.yaml@CI-latest
+    with:
+      repo_branch:                          ${{ github.ref_name }}

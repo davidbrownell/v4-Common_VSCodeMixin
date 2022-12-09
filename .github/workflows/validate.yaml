@@ -1,0 +1,67 @@
+# ----------------------------------------------------------------------
+# |
+# |  validate.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 09:10:52
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "[callable] Validates VSCodeMixin"
+
+on:
+  workflow_call:
+    inputs:
+      repo_branch:                          {type: string, required: true}
+      bootstrap_branch_overrides:           {type: string, required: false}
+
+jobs:
+  _affbcf4b-6df0-45cb-9c68-1c2026c83a0c:
+    name: "Build and Test"
+
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+
+        configuration:
+          - None
+
+    # ----------------------------------------------------------------------
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate.yaml@CI-davidbrownell_Mixins # BugBug CI-v1
+    with:
+      job_name_prefix:                      "VSCodeMixin"
+      is_mixin_repository:                  true
+      repo_name:                            davidbrownell/v4-Common_VSCodeMixin
+      repo_branch:                          ${{ inputs.repo_branch }}
+      bootstrap_branch_overrides:           ${{ inputs.bootstrap_branch_overrides }}
+
+      os:                                   ${{ matrix.os }}
+      configuration:                        ${{ matrix.configuration }}
+
+      run_Builder:                          true
+      run_MatchTests:                       true
+
+      # Use the following values to control how different test types are run:
+      #
+      #   0: Do not run these test types
+      #   1: Run these test types without code coverage
+      #   2: Run these test types with code coverage
+      #   3: Run these test types with and without code coverage
+
+      execute_UnitTests:                    3
+      execute_FunctionalTests:              1
+      execute_IntegrationTests:             1
+      execute_SystemTests:                  1
+      execute_LocalEndToEndTests:           1
+      execute_EndToEndTests:                0
+      execute_BuildVerificationTests:       0
+      execute_PerformanceTests:             0
