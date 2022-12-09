@@ -1,0 +1,29 @@
+# ----------------------------------------------------------------------
+# |
+# |  validate_with_dependencies.yaml
+# |
+# |  David Brownell <db@DavidBrownell.com>
+# |      2022-12-09 09:11:23
+# |
+# ----------------------------------------------------------------------
+# |
+# |  Copyright David Brownell 2022
+# |  Distributed under the Boost Software License, Version 1.0. See
+# |  accompanying file LICENSE_1_0.txt or copy at
+# |  http://www.boost.org/LICENSE_1_0.txt.
+# |
+# ----------------------------------------------------------------------
+name: "[callable] Validates VSCodeMixin (and its dependencies)"
+
+on:
+  workflow_call:
+    inputs:
+      repo_branch:                          {type: string, required: true}
+
+jobs:
+  _a8a17a91-e965-4890-9c6c-15b0d35ba61c:
+    name: "VSCodeMixin"
+    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-latest
+    with:
+      repo_branch: ${{ inputs.repo_branch }}
+      bootstrap_branch_overrides: "VSCodeMixin:${{ inputs.repo_branch }}"
