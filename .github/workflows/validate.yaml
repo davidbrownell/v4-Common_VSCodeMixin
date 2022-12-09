@@ -36,9 +36,9 @@ jobs:
           - None
 
     # ----------------------------------------------------------------------
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate.yaml@CI-davidbrownell_Mixins # BugBug CI-v1
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate.yaml@CI-v1
     with:
-      job_name_prefix:                      "VSCodeMixin"
+      job_name_prefix:                      "Common_VSCodeMixin"
       is_mixin_repository:                  true
       repo_name:                            davidbrownell/v4-Common_VSCodeMixin
       repo_branch:                          ${{ inputs.repo_branch }}
