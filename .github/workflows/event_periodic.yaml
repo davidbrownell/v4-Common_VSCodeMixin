@@ -22,7 +22,16 @@ on:
 
 jobs:
   _1f294900-13ea-4b78-bf73-5b8bd9dc2dc3:
-    name: "Validate"
+    name: "Validate (${{ github.ref_name }})"
     uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-latest
     with:
-      repo_branch:                          ${{ github.ref_name }}
+      repo_branch: ${{ github.ref_name }}
+
+  _b3dbb0b7-c7cb-4842-8764-eff6ea9446c1:
+    name: "Validate with Dependencies (${{ github.ref_name }})"
+    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate_with_dependencies.yaml@CI-latest
+    with:
+      repo_branch: ${{ github.ref_name }}
+
+    needs:
+      - _1f294900-13ea-4b78-bf73-5b8bd9dc2dc3
