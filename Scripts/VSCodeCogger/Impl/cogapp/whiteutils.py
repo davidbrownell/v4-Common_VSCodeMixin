@@ -1,7 +1,7 @@
 """ Indentation utilities for Cog.
     http://nedbatchelder.com/code/cog
 
-    Copyright 2004-2019, Ned Batchelder.
+    Copyright 2004-23, Ned Batchelder.
 """
 
 from __future__ import absolute_import
