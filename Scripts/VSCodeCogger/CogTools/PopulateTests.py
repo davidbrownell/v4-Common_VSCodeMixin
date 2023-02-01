@@ -25,6 +25,7 @@ from typing import Dict, List
 import cog                                  # type: ignore  # pylint: disable=import-error
 
 from Common_Foundation.ContextlibEx import ExitStack
+from Common_Foundation import DynamicPluginArchitecture
 from Common_Foundation.EnumSource import EnumSource
 from Common_Foundation import PathEx
 from Common_Foundation import Types
@@ -106,12 +107,6 @@ _CONFIGURATIONS: Dict[
         """,
     ),
 }
-
-
-# ----------------------------------------------------------------------
-sys.path.insert(0, str(PathEx.EnsureDir(Path(Types.EnsureValid(os.getenv("DEVELOPMENT_ENVIRONMENT_FOUNDATION"))))))
-with ExitStack(lambda: sys.path.pop(0)):
-    from RepositoryBootstrap.SetupAndActivate import DynamicPluginArchitecture  # type: ignore  # pylint: disable=import-error
 
 
 # ----------------------------------------------------------------------
