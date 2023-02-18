@@ -66,7 +66,7 @@ _CONFIGURATIONS: Dict[
                 // To run a test method within a class, use the following expression
                 // with the `-k` argument that follows:
                 //
-                //      <class_name> AND <test_name> [AND NOT <other_test_name>]
+                //      <class_name> and <test_name> [and not <other_test_name>]
                 //
 
                 // "-k", "test_name or expression",
