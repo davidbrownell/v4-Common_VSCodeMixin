@@ -23,7 +23,7 @@ on:
 jobs:
   _a8a17a91-e965-4890-9c6c-15b0d35ba61c:
     name: "VSCodeMixin"
-    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ inputs.repo_branch }}
       bootstrap_branch_overrides: "VSCodeMixin:${{ inputs.repo_branch }}"
