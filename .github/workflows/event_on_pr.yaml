@@ -24,13 +24,13 @@ on:
 jobs:
   _ea6be881-f2ed-45dd-8258-45ac0cbe006e:
     name: "Validate (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ github.head_ref }}
 
   _dcb3b81f-ec28-4812-a6f9-b29e69725ab8:
     name: "Validate Pull Request (target: ${{ github.base_ref }})"
-    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate_pull_request.yaml@CI-latest
+    uses: davidbrownell/v4-Common_Foundation/.github/workflows/callable_validate_pull_request.yaml@CI-v1
     with:
       job_name_prefix: Common_VSCodeMixin
       is_mixin_repository: true

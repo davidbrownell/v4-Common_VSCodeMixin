@@ -26,7 +26,7 @@ on:
 jobs:
   _56e7b177-61e2-4f8a-b362-87e2fcf87333:
     name: "Validate (${{ github.ref_name }})"
-    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-latest
+    uses: davidbrownell/v4-Common_VSCodeMixin/.github/workflows/validate.yaml@CI-v1
     with:
       repo_branch: ${{ github.ref_name }}
 
